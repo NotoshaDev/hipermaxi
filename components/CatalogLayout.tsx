@@ -10,6 +10,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/components/types/product";
 import { CATEGORIES, PRODUCT_SECTIONS } from "@/lib/data";
+import { useCart } from "@/lib/cart-context";
+import { useToast } from "@/components/ToastProvider";
 
 // ─── Utility ──────────────────────────────────────────────────────────────────
 
@@ -198,16 +200,17 @@ function MediaBanner() {
 // ─── Catalog Card ─────────────────────────────────────────────────────────────
 
 function CatalogCard({ product }: { product: Product }) {
-  const [added, setAdded] = useState(false);
   const [busy, setBusy] = useState(false);
+  const { addItem } = useCart();
+  const { showToast } = useToast();
 
   const handleAdd = async () => {
-    if (busy || added || !product.inStock) return;
+    if (busy || !product.inStock) return;
     setBusy(true);
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 300));
+    addItem(product);
+    showToast(`${product.name} agregado al carrito`, "success");
     setBusy(false);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -260,14 +263,10 @@ function CatalogCard({ product }: { product: Product }) {
           <button
             onClick={handleAdd}
             disabled={busy}
-            aria-label={added ? "Producto agregado al carrito" : `Agregar ${product.name}`}
-            className={`mt-3 h-8 w-full rounded text-xs font-semibold transition-all duration-200 active:scale-95 disabled:cursor-wait ${
-              added
-                ? "bg-emerald-500 text-white"
-                : "bg-slate-200 text-slate-700 hover:bg-orange-500 hover:text-white"
-            }`}
+            aria-label={`Agregar ${product.name}`}
+            className="mt-3 h-8 w-full rounded bg-slate-200 text-xs font-semibold text-slate-700 transition-all duration-200 hover:bg-orange-500 hover:text-white active:scale-95 disabled:cursor-wait disabled:opacity-60"
           >
-            {added ? "Agregado ✓" : busy ? "…" : "Agregar"}
+            {busy ? "…" : "Agregar"}
           </button>
         ) : (
           <div className="mt-3 flex h-8 items-center justify-center rounded border border-slate-200 text-xs font-medium text-slate-400">

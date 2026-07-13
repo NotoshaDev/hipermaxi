@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import LayoutHeader from "@/components/LayoutHeader";
 import LayoutFooter from "@/components/LayoutFooter";
+import CountdownBanner from "@/components/CountdownBanner";
+import { CartProvider } from "@/lib/cart-context";
+import { ToastProvider } from "@/components/ToastProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,11 +46,21 @@ export default function RootLayout({
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-zinc-50">
-        {/* Persistent site shell */}
-        <LayoutHeader />
-        {children}
-        <LayoutFooter />
+      <body className="flex min-h-full flex-col bg-zinc-100">
+        {/*
+         * CartProvider  — estado global del carrito (contexto + localStorage)
+         * ToastProvider — sistema de notificaciones flotantes
+         * CountdownBanner — banner de ofertas (debajo del header, antes del body)
+         * CartDrawer está montado dentro de LayoutHeader para no perder contexto
+         */}
+        <CartProvider>
+          <ToastProvider>
+            <LayoutHeader />
+            <CountdownBanner />
+            {children}
+            <LayoutFooter />
+          </ToastProvider>
+        </CartProvider>
       </body>
     </html>
   );
