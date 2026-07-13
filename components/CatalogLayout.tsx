@@ -5,7 +5,7 @@
 //   Derecha   : Banner multimedia + Grid de productos
 // ──────────────────────────────────────────────────────────────────────────────
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/components/types/product";
@@ -199,6 +199,14 @@ function MediaBanner() {
 
 // ─── Catalog Card ─────────────────────────────────────────────────────────────
 
+/** Colores de los badges por tipo */
+const BADGE_STYLES: Record<string, string> = {
+  "Nuevo":       "bg-emerald-500 text-white",
+  "Oferta":      "bg-red-500 text-white",
+  "Fit & Light": "bg-sky-500 text-white",
+  "Fresco":      "bg-lime-500 text-white",
+};
+
 function CatalogCard({ product }: { product: Product }) {
   const [busy, setBusy] = useState(false);
   const { addItem } = useCart();
@@ -213,6 +221,10 @@ function CatalogCard({ product }: { product: Product }) {
     setBusy(false);
   };
 
+  // Badge a mostrar: primero «Nuevo» si aplica, luego el badge del producto
+  const badgeText = product.isNew ? "Nuevo" : product.badge ?? null;
+  const badgeStyle = badgeText ? (BADGE_STYLES[badgeText] ?? "bg-slate-700 text-white") : null;
+
   return (
     <article
       aria-label={product.name}
@@ -220,6 +232,15 @@ function CatalogCard({ product }: { product: Product }) {
     >
       {/* Imagen del producto */}
       <div className="relative aspect-square w-full overflow-hidden bg-slate-50">
+        {/* Badge superior izquierdo: Nuevo / Fit & Light / Fresco */}
+        {badgeText && !product.discountPercent && (
+          <div
+            className={`absolute left-2 top-2 z-10 rounded-md px-1.5 py-0.5 text-[10px] font-bold ${badgeStyle}`}
+          >
+            {badgeText}
+          </div>
+        )}
+        {/* Badge descuento superior derecho */}
         {product.discountPercent ? (
           <div
             className="absolute right-2 top-2 z-10 rounded-md bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white"
@@ -258,7 +279,7 @@ function CatalogCard({ product }: { product: Product }) {
           ) : null}
         </div>
 
-        {/* Botón "Agregar" — gris rectangular como en el wireframe */}
+        {/* Botón "Agregar" */}
         {product.inStock ? (
           <button
             onClick={handleAdd}
@@ -278,9 +299,48 @@ function CatalogCard({ product }: { product: Product }) {
   );
 }
 
+// ─── Skeleton Card ────────────────────────────────────────────────────────────
+// Tarjeta placeholder animada — se muestra mientras los datos cargan.
+
+function SkeletonCard() {
+  return (
+    <div className="flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-100" aria-hidden="true">
+      {/* Imagen placeholder */}
+      <div className="aspect-square w-full animate-pulse bg-slate-200" />
+      {/* Texto placeholder */}
+      <div className="flex flex-col gap-2 p-3">
+        <div className="h-2.5 w-16 animate-pulse rounded-full bg-slate-200" />
+        <div className="h-3 w-full animate-pulse rounded bg-slate-200" />
+        <div className="h-3 w-3/4 animate-pulse rounded bg-slate-200" />
+        <div className="mt-1 h-4 w-20 animate-pulse rounded bg-slate-200" />
+        <div className="mt-2 h-8 w-full animate-pulse rounded bg-slate-200" />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonGrid({ count = 10 }: { count?: number }) {
+  return (
+    <ul
+      className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 xl:grid-cols-5"
+      aria-label="Cargando productos…"
+      role="list"
+    >
+      {Array.from({ length: count }).map((_, i) => (
+        <li key={i} role="listitem">
+          <SkeletonCard />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 // ─── Product Grid ─────────────────────────────────────────────────────────────
 
-function ProductGrid({ products }: { products: Product[] }) {
+function ProductGrid({ products, loading }: { products: Product[]; loading?: boolean }) {
+  // Muestra skeletons mientras loading === true
+  if (loading) return <SkeletonGrid count={10} />;
+
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
@@ -294,10 +354,6 @@ function ProductGrid({ products }: { products: Product[] }) {
   }
 
   return (
-    /*
-     * Grid: 5 columnas en desktop (xl+), 3 en tablet (md-xl), 2 en móvil.
-     * Coincide con los wireframes (filas de 5 en desktop, 3 en tablet).
-     */
     <ul
       className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 xl:grid-cols-5"
       aria-label="Catálogo de productos"
@@ -368,6 +424,12 @@ export default function CatalogLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [priceMax, setPriceMax] = useState(PRICE_CEILING);
+  // Skeleton: simula una carga inicial de 600 ms para mostrar el estado de loading
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
 
   const filteredProducts = ALL_PRODUCTS.filter((p) => {
     const categoryMatch = activeCategory === "all" || p.category === activeCategory;
@@ -436,8 +498,8 @@ export default function CatalogLayout() {
             <MediaBanner />
           </div>
 
-          {/* Grid de productos */}
-          <ProductGrid products={filteredProducts} />
+          {/* Grid de productos — con skeleton en la carga inicial */}
+          <ProductGrid products={filteredProducts} loading={loading} />
         </main>
       </div>
     </div>

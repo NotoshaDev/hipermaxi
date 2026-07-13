@@ -4,6 +4,7 @@ import "./globals.css";
 import LayoutHeader from "@/components/LayoutHeader";
 import LayoutFooter from "@/components/LayoutFooter";
 import CountdownBanner from "@/components/CountdownBanner";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { CartProvider } from "@/lib/cart-context";
 import { ToastProvider } from "@/components/ToastProvider";
 
@@ -59,6 +60,8 @@ export default function RootLayout({
             <CountdownBanner />
             {children}
             <LayoutFooter />
+            {/* Botón flotante de WhatsApp — visible en todas las páginas */}
+            <WhatsAppButton />
           </ToastProvider>
         </CartProvider>
       </body>
