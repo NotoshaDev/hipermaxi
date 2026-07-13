@@ -1,20 +1,19 @@
 // ─── app/page.tsx ─────────────────────────────────────────────────────────────
-// Home page — the carousel now lives inside LayoutHeader.
-// Server Component (default in App Router).
+// Home page — estructura fiel al wireframe:
+//   1. HeroBanner  : Carrusel dentro del contenedor central
+//   2. CatalogLayout : Sidebar (Filtro) + Banner multimedia + Grid de productos
 // ──────────────────────────────────────────────────────────────────────────────
 
-import CategorySection from "@/components/CategorySection";
+import HeroBanner from "@/components/HeroBanner";
 import CatalogLayout from "@/components/CatalogLayout";
 
 export default function HomePage() {
   return (
-    <main id="main-content" className="flex-1 bg-zinc-50">
-      {/* Category strip — just below the header carousel */}
-      <div className="bg-white shadow-[0_1px_0_0_#e2e8f0]">
-        <CategorySection />
-      </div>
+    <main id="main-content" className="flex-1 bg-zinc-100">
+      {/* Carrusel — dentro del contenedor max-w-7xl, NO full-width */}
+      <HeroBanner />
 
-      {/* Catalog: filter sidebar + media banner + product grid */}
+      {/* Catálogo: sidebar de filtros + banner multimedia + grid de productos */}
       <CatalogLayout />
     </main>
   );

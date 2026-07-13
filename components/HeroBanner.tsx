@@ -1,176 +1,200 @@
+"use client";
 // ─── HeroBanner.tsx ───────────────────────────────────────────────────────────
-// Replaces the old heavy carousel with a single, well-optimised asymmetric hero.
-// Server Component — no "use client" needed.
+// Carrusel promocional — dentro del contenedor central (max-w-7xl).
+// El banner NO es full-width: respeta los bordes laterales del contenedor.
 // ──────────────────────────────────────────────────────────────────────────────
 
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-// ──── Pill / chip for the eyebrow label ────────────────────────────────────────
-function Eyebrow({ children }: { children: React.ReactNode }) {
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface CarouselSlide {
+  id: string;
+  src: string;
+  alt: string;
+  headline: string;
+  cta: string;
+  ctaHref: string;
+}
+
+// ─── Static slides ────────────────────────────────────────────────────────────
+
+const CAROUSEL_SLIDES: CarouselSlide[] = [
+  {
+    id: "slide-1",
+    src: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1600&h=600&fit=crop&q=75",
+    alt: "Pasillos luminosos de Hipermaxi con productos frescos",
+    headline: "Frescura y calidad local, cada día.",
+    cta: "Ver ofertas",
+    ctaHref: "/ofertas",
+  },
+  {
+    id: "slide-2",
+    src: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1600&h=600&fit=crop&q=75",
+    alt: "Sección de frutas y verduras frescas",
+    headline: "Lo mejor del campo directo a tu mesa.",
+    cta: "Explorar",
+    ctaHref: "/categoria/frutas-verduras",
+  },
+  {
+    id: "slide-3",
+    src: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1600&h=600&fit=crop&q=75",
+    alt: "Sección de carnicería y charcutería",
+    headline: "Cortes selectos, calidad garantizada.",
+    cta: "Ver carnes",
+    ctaHref: "/categoria/carnes",
+  },
+];
+
+// ─── Arrow icons ──────────────────────────────────────────────────────────────
+
+function IconChevronLeft({ className }: { className?: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-red-600 ring-1 ring-red-100">
-      <span className="size-1.5 rounded-full bg-red-500" aria-hidden="true" />
-      {children}
-    </span>
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
+    </svg>
   );
 }
 
-// ──── Floating stat badge used in the visual cluster ──────────────────────────
-function StatBadge({
-  value,
-  label,
-  className = "",
-}: {
-  value: string;
-  label: string;
-  className?: string;
-}) {
+function IconChevronRight({ className }: { className?: string }) {
   return (
-    <div
-      className={`absolute flex flex-col items-center justify-center rounded-2xl bg-white px-4 py-3 shadow-lg ring-1 ring-zinc-100 ${className}`}
-    >
-      <span className="text-xl font-bold leading-none text-zinc-900">
-        {value}
-      </span>
-      <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-zinc-400">
-        {label}
-      </span>
-    </div>
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
+    </svg>
   );
 }
 
-// ──── Main component ───────────────────────────────────────────────────────────
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export default function HeroBanner() {
+  const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const total = CAROUSEL_SLIDES.length;
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const goTo = useCallback(
+    (index: number) => {
+      setCurrent(((index % total) + total) % total);
+    },
+    [total]
+  );
+
+  const prev = () => goTo(current - 1);
+  const next = useCallback(() => goTo(current + 1), [current, goTo]);
+
+  // Auto-play cada 5 s, pausado al hacer hover
+  useEffect(() => {
+    if (paused) return;
+    timerRef.current = setTimeout(next, 5000);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [current, paused, next]);
+
   return (
+    /*
+     * RESTRICCIÓN CRÍTICA: El carrusel vive DENTRO del contenedor central.
+     * max-w-7xl + mx-auto + px-4/6/8 garantizan que se alinee con el header
+     * y el contenido inferior. NO usa w-screen ni -mx extendido.
+     */
     <section
-      aria-label="Bienvenida a Hipermaxi Juan de la Rosa"
-      className="relative overflow-hidden bg-gradient-to-br from-zinc-50 via-white to-red-50/30"
+      aria-label="Banners promocionales Hipermaxi"
+      className="bg-zinc-100 py-4"
     >
-      {/* Subtle background decoration */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        aria-hidden="true"
-      >
-        <div className="absolute -right-32 -top-32 size-96 rounded-full bg-red-500/5 blur-3xl" />
-        <div className="absolute -bottom-20 left-1/3 size-80 rounded-full bg-amber-400/5 blur-3xl" />
-      </div>
-
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:py-24">
-        {/* ── LEFT: Copy & CTA ── */}
-        <div className="flex flex-col justify-center">
-          <Eyebrow>Juan de la Rosa · Cochabamba</Eyebrow>
-
-          <h1 className="mt-5 text-4xl font-extrabold leading-tight tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl">
-            Frescura y{" "}
-            <span className="relative whitespace-nowrap text-red-600">
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 418 42"
-                className="absolute left-0 top-2/3 h-[0.58em] w-full fill-red-300/50"
-                preserveAspectRatio="none"
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Carrusel contenido — overflow-hidden recorta slides fuera de vista */}
+        <div
+          className="relative overflow-hidden rounded-2xl bg-zinc-900 shadow-md"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          aria-roledescription="carrusel"
+        >
+          {/* ── Track de slides ── */}
+          <div
+            className="flex transition-transform duration-700 ease-in-out"
+            style={{ transform: `translateX(-${current * 100}%)` }}
+          >
+            {CAROUSEL_SLIDES.map((slide, i) => (
+              <div
+                key={slide.id}
+                className="relative min-w-full"
+                aria-hidden={i !== current}
+                role="group"
+                aria-roledescription="diapositiva"
+                aria-label={`Diapositiva ${i + 1} de ${total}`}
               >
-                <path d="M203.371.916c-26.013-2.078-76.686 1.963-124.73 9.946L67.3 12.749C35.421 18.062 18.2 21.766 6.004 25.934 1.244 27.561.828 27.778.874 28.61c.07 1.214.828 1.121 9.595-1.176 9.072-2.377 17.15-3.92 39.246-7.496C123.565 7.986 157.869 4.492 195.942 5.046c7.461.108 19.25 1.696 19.17 2.582-.107 1.183-7.874 4.31-25.75 9.395C156.412 43.364 111.458 52.15 91.05 52.805c-10.329.34-11.345-.406-11.345-2.97 0-4.019 6.073-6.217 24.882-10.748l-.048-.068" />
-              </svg>
-              calidad local,
-            </span>{" "}
-            cada día.
-          </h1>
+                {/* Imagen del slide */}
+                <div className="relative h-[220px] w-full sm:h-[300px] lg:h-[380px]">
+                  <Image
+                    src={slide.src}
+                    alt={slide.alt}
+                    fill
+                    sizes="(max-width: 1280px) 100vw, 1280px"
+                    className="object-cover"
+                    quality={75}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    preload={i === 0}
+                  />
+                  {/* Gradiente oscuro */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
+                </div>
 
-          <p className="mt-6 max-w-lg text-lg leading-relaxed text-zinc-500">
-            En Hipermaxi Juan de la Rosa encontrás todo lo que necesitás a un
-            solo paso — con precios que cuidan tu bolsillo y productos frescos
-            seleccionados para Cochabamba.
-          </p>
-
-          {/* Feature pills */}
-          <ul className="mt-8 flex flex-wrap gap-2" aria-label="Ventajas">
-            {[
-              "🛒 Click & Recoge",
-              "🚚 Envío a domicilio",
-              "❄️ Cadena de frío",
-              "💊 Farmacia en local",
-            ].map((f) => (
-              <li
-                key={f}
-                className="rounded-full bg-white px-3.5 py-1.5 text-sm font-medium text-zinc-700 shadow-sm ring-1 ring-zinc-200"
-              >
-                {f}
-              </li>
+                {/* Texto del slide */}
+                <div className="absolute inset-0 flex items-center px-8 lg:px-12">
+                  <div>
+                    <p className="max-w-sm text-xl font-bold leading-snug text-white drop-shadow sm:text-2xl lg:text-3xl">
+                      {slide.headline}
+                    </p>
+                    <Link
+                      href={slide.ctaHref}
+                      className="mt-4 inline-flex items-center gap-2 rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:bg-orange-600 active:scale-95"
+                    >
+                      {slide.cta}
+                    </Link>
+                  </div>
+                </div>
+              </div>
             ))}
-          </ul>
-
-          {/* CTAs */}
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link
-              href="/productos"
-              className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:shadow-lg hover:shadow-red-200 active:scale-95"
-            >
-              Ver productos
-              <svg
-                className="size-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
-            </Link>
-            <Link
-              href="/ofertas"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-zinc-800 shadow-sm ring-1 ring-zinc-200 transition-all duration-200 hover:bg-zinc-50 hover:ring-zinc-300 active:scale-95"
-            >
-              Ver ofertas
-            </Link>
-          </div>
-        </div>
-
-        {/* ── RIGHT: Visual cluster ── */}
-        <div className="relative flex items-center justify-center lg:justify-end">
-          {/* Main hero image */}
-          <div className="relative h-[420px] w-full max-w-[520px] overflow-hidden rounded-3xl shadow-2xl shadow-zinc-300/60 sm:h-[480px]">
-            <Image
-              src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=1040&h=960&fit=crop&q=75"
-              alt="Pasillos luminosos y surtidos del supermercado Hipermaxi"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-              /* Above the fold → eager load + preload link in <head> */
-              loading="eager"
-              preload
-            />
-            {/* Gradient overlay for readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
           </div>
 
-          {/* Floating stat badges */}
-          <StatBadge
-            value="900+"
-            label="Productos"
-            className="-left-6 top-12 sm:-left-10"
-          />
-          <StatBadge
-            value="Bs 0"
-            label="Envío mín."
-            className="-right-4 bottom-24 sm:-right-8"
-          />
+          {/* ── Flechas de navegación ── */}
+          <button
+            onClick={prev}
+            aria-label="Diapositiva anterior"
+            className="absolute left-3 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm text-white ring-1 ring-white/30 transition-all duration-150 hover:bg-white/40 active:scale-90 lg:left-5 lg:size-10"
+          >
+            <IconChevronLeft className="size-5" />
+          </button>
+          <button
+            onClick={next}
+            aria-label="Siguiente diapositiva"
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm text-white ring-1 ring-white/30 transition-all duration-150 hover:bg-white/40 active:scale-90 lg:right-5 lg:size-10"
+          >
+            <IconChevronRight className="size-5" />
+          </button>
 
-          {/* Small accent image */}
-          <div className="absolute bottom-4 left-4 hidden size-28 overflow-hidden rounded-2xl shadow-xl ring-4 ring-white sm:block md:size-32">
-            <Image
-              src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=256&h=256&fit=crop&q=75"
-              alt="Productos frescos y coloridos"
-              fill
-              sizes="128px"
-              className="object-cover"
-              loading="lazy"
-            />
+          {/* ── Indicadores de puntos ── */}
+          <div
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2"
+            role="tablist"
+            aria-label="Seleccionar diapositiva"
+          >
+            {CAROUSEL_SLIDES.map((slide, i) => (
+              <button
+                key={slide.id}
+                role="tab"
+                aria-selected={i === current}
+                aria-label={`Ir a diapositiva ${i + 1}`}
+                onClick={() => goTo(i)}
+                className={`rounded-full transition-all duration-300 ${
+                  i === current
+                    ? "w-6 h-2 bg-white"
+                    : "size-2 bg-white/50 hover:bg-white/80"
+                }`}
+              />
+            ))}
           </div>
         </div>
       </div>
