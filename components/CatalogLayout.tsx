@@ -228,7 +228,7 @@ function CatalogCard({ product }: { product: Product }) {
   return (
     <article
       aria-label={product.name}
-      className="group flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-100 transition-all duration-200 hover:shadow-md hover:ring-slate-200"
+      className="group flex h-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-100 transition-all duration-200 hover:shadow-md hover:ring-slate-200"
     >
       {/* Imagen — clickeable → página de detalle */}
       <Link href={`/productos/${product.slug}`} tabIndex={-1} aria-label={`Ver detalle de ${product.name}`}>
@@ -262,17 +262,24 @@ function CatalogCard({ product }: { product: Product }) {
         </div>
       </Link>
 
-      {/* Info del producto */}
+      {/* Info del producto — flex-col con espacio reservado para cada zona */}
       <div className="flex flex-1 flex-col p-3">
         <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">{product.brand}</span>
         <Link href={`/productos/${product.slug}`}>
-          <h3 className="mt-0.5 line-clamp-2 flex-1 text-xs font-semibold leading-snug text-slate-800 transition-colors hover:text-orange-600 sm:text-sm">
+          {/*
+           * min-h-[2.5rem] = espacio para exactamente 2 líneas de texto (text-xs/sm con leading-snug).
+           * line-clamp-2 trunca si hay más de 2 líneas. El resultado: altura consistente en TODAS las tarjetas.
+           */}
+          <h3 className="mt-0.5 line-clamp-2 min-h-[2.5rem] text-xs font-semibold leading-snug text-slate-800 transition-colors hover:text-orange-600 sm:text-sm">
             {product.name}
           </h3>
         </Link>
 
-        {/* Precio */}
-        <div className="mt-2 flex items-end gap-1.5">
+        {/*
+         * min-h-[2rem] = reserva espacio para el precio tachado aunque no exista.
+         * Sin esto, las tarjetas sin descuento son más cortas y el botón sube.
+         */}
+        <div className="mt-2 flex min-h-[2rem] items-end gap-1.5">
           <span className="text-sm font-extrabold text-slate-900 sm:text-base">
             {formatPrice(product.price)}
           </span>
@@ -283,18 +290,18 @@ function CatalogCard({ product }: { product: Product }) {
           ) : null}
         </div>
 
-        {/* Botón "Agregar" */}
+        {/* mt-auto empuja el botón siempre al fondo de la tarjeta */}
         {product.inStock ? (
           <button
             onClick={handleAdd}
             disabled={busy}
             aria-label={`Agregar ${product.name}`}
-            className="mt-3 h-8 w-full rounded bg-slate-200 text-xs font-semibold text-slate-700 transition-all duration-200 hover:bg-orange-500 hover:text-white active:scale-95 disabled:cursor-wait disabled:opacity-60"
+            className="mt-auto h-8 w-full rounded bg-slate-200 text-xs font-semibold text-slate-700 transition-all duration-200 hover:bg-orange-500 hover:text-white active:scale-95 disabled:cursor-wait disabled:opacity-60"
           >
             {busy ? "…" : "Agregar"}
           </button>
         ) : (
-          <div className="mt-3 flex h-8 items-center justify-center rounded border border-slate-200 text-xs font-medium text-slate-400">
+          <div className="mt-auto flex h-8 items-center justify-center rounded border border-slate-200 text-xs font-medium text-slate-400">
             Sin stock
           </div>
         )}
@@ -364,7 +371,7 @@ function ProductGrid({ products, loading }: { products: Product[]; loading?: boo
       role="list"
     >
       {products.map((p) => (
-        <li key={p.id} role="listitem">
+        <li key={p.id} role="listitem" className="h-full">
           <CatalogCard product={p} />
         </li>
       ))}
