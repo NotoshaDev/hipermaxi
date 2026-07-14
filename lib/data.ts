@@ -94,8 +94,10 @@ export const CATEGORIES: Category[] = [
 const SAMPLE_PRODUCTS: Product[] = [
   {
     id: "p001",
+    slug: "aceite-girasol-fino",
     name: "Aceite de Girasol Fino",
     brand: "Fino",
+    description: "Aceite de girasol refinado de alta calidad, ideal para freír, saltear y preparar aderezos. Sin colesterol y con vitamina E natural. Contenido neto: 900 ml.",
     price: 18.9,
     originalPrice: 22.5,
     discountPercent: 16,
@@ -107,8 +109,10 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
   {
     id: "p002",
+    slug: "leche-entera-uht-pil",
     name: "Leche Entera UHT",
     brand: "Pil Andina",
+    description: "Leche entera ultra-pasteurizada lista para beber, con todos los nutrientes naturales de la leche fresca. Sin conservantes. Contenido: 1 litro.",
     price: 7.5,
     imageUrl: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=400&fit=crop&q=80",
     imageAlt: "Caja de leche UHT Pil Andina",
@@ -120,8 +124,10 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
   {
     id: "p003",
+    slug: "arroz-extra-bolivar",
     name: "Arroz Extra Calidad Superior",
     brand: "Bolívar",
+    description: "Arroz de grano largo, seleccionado y procesado bajo estrictos estándares de calidad. Ideal para preparaciones diarias. Presentación: bolsa de 5 kg.",
     price: 12.9,
     originalPrice: 15.0,
     discountPercent: 14,
@@ -133,8 +139,10 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
   {
     id: "p004",
+    slug: "yogur-griego-natural-pil",
     name: "Yogur Griego Natural",
     brand: "Pil",
+    description: "Yogur estilo griego con textura cremosa y alto contenido proteico. Sin azúcar añadida, perfecto para desayunos y meriendas saludables. 500 g.",
     price: 9.9,
     imageUrl: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop&q=80",
     imageAlt: "Yogur griego natural Pil",
@@ -145,8 +153,10 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
   {
     id: "p005",
+    slug: "pan-integral-artesanal",
     name: "Pan Integral Artesanal",
     brand: "Panadería Hipermaxi",
+    description: "Pan elaborado con harina integral de trigo, sin aditivos artificiales. Horneado diariamente en nuestra panadería para garantizar máxima frescura. 400 g.",
     price: 5.5,
     imageUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=400&fit=crop&q=80",
     imageAlt: "Pan integral artesanal",
@@ -157,8 +167,10 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
   {
     id: "p006",
+    slug: "detergente-liquido-ariel",
     name: "Detergente Líquido Ariel",
     brand: "Ariel",
+    description: "Detergente líquido con tecnología OXI que elimina manchas difíciles desde el primer lavado, incluso en agua fría. Fórmula concentrada. 1.8 litros.",
     price: 34.9,
     originalPrice: 42.0,
     discountPercent: 17,
@@ -170,8 +182,10 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
   {
     id: "p007",
+    slug: "avena-quaker-tradicional",
     name: "Avena Quaker Tradicional",
     brand: "Quaker",
+    description: "Avena en hojuelas 100% natural, fuente de fibra y energía. Ideal para preparar avena caliente, granola casera o smoothies. Sin conservantes. 800 g.",
     price: 11.5,
     imageUrl: "https://images.unsplash.com/photo-1614961233913-a5113a4a34ed?w=400&h=400&fit=crop&q=80",
     imageAlt: "Avena Quaker tradicional",
@@ -182,8 +196,10 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
   {
     id: "p008",
+    slug: "agua-mineral-manantial",
     name: "Agua Mineral Sin Gas",
     brand: "Manantial",
+    description: "Agua mineral natural captada en manantiales bolivianos de alta montaña. Sin gas, de pH neutro y libre de contaminantes. Botella de 2 litros.",
     price: 4.5,
     originalPrice: 5.5,
     discountPercent: 18,
@@ -198,8 +214,10 @@ const SAMPLE_PRODUCTS: Product[] = [
 const FIT_LIGHT_PRODUCTS: Product[] = [
   {
     id: "fl001",
+    slug: "granola-sin-azucar-natual",
     name: "Granola Sin Azúcar",
     brand: "Natual",
+    description: "Granola artesanal elaborada con avena, quinua, semillas y frutos secos. Sin azúcar añadida, endulzada con stevia. Alta en fibra y proteínas. 350 g.",
     price: 22.9,
     imageUrl: "https://images.unsplash.com/photo-1517093602195-b40af9688f2a?w=400&h=400&fit=crop&q=80",
     imageAlt: "Granola sin azúcar Natual",
@@ -210,8 +228,10 @@ const FIT_LIGHT_PRODUCTS: Product[] = [
   },
   {
     id: "fl002",
+    slug: "leche-descremada-uht-pil",
     name: "Leche Descremada UHT",
     brand: "Pil Andina",
+    description: "Leche descremada con toda la proteína y el calcio de la leche entera, pero con menos del 0.5% de grasa. Ideal para dietas bajas en calorías. 1 litro.",
     price: 7.9,
     imageUrl: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&h=400&fit=crop&q=80",
     imageAlt: "Leche descremada Pil Andina",
@@ -222,8 +242,10 @@ const FIT_LIGHT_PRODUCTS: Product[] = [
   },
   {
     id: "fl003",
+    slug: "atun-en-agua-mar-del-plata",
     name: "Atún en Agua Natural",
     brand: "Mar del Plata",
+    description: "Atún en trozos conservado en agua natural, sin aceite añadido. Alto en proteínas y Omega-3. Sin gluten. Lata de 170 g.",
     price: 14.5,
     originalPrice: 17.0,
     discountPercent: 15,
@@ -236,8 +258,10 @@ const FIT_LIGHT_PRODUCTS: Product[] = [
   },
   {
     id: "fl004",
+    slug: "barras-cereal-integral-nutrilac",
     name: "Barras de Cereal Integral",
     brand: "Nutrilac",
+    description: "Barras de cereal elaboradas con avena integral, miel y frutos secos. Sin grasas trans, bajas en sodio. Caja con 6 unidades de 25 g cada una.",
     price: 8.9,
     imageUrl: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=400&h=400&fit=crop&q=80",
     imageAlt: "Barras de cereal integral Nutrilac",
@@ -249,8 +273,10 @@ const FIT_LIGHT_PRODUCTS: Product[] = [
   },
   {
     id: "fl005",
+    slug: "aceite-oliva-extra-virgen-carbonell",
     name: "Aceite de Oliva Extra Virgen",
     brand: "Carbonell",
+    description: "Aceite de oliva de primera extracción en frío, con acidez máxima de 0.4%. Aroma afrutado y sabor intenso. Ideal para ensaladas y cocinas mediterráneas. 500 ml.",
     price: 45.9,
     originalPrice: 54.0,
     discountPercent: 15,
@@ -263,8 +289,10 @@ const FIT_LIGHT_PRODUCTS: Product[] = [
   },
   {
     id: "fl006",
+    slug: "quinua-organica-andean",
     name: "Quinua Orgánica Real",
     brand: "Andean",
+    description: "Quinua real boliviana certificada orgánica, cultivada en los Andes a más de 3800 msnm. Proteína completa con los 9 aminoácidos esenciales. Sin gluten. 500 g.",
     price: 18.0,
     imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop&q=80",
     imageAlt: "Quinua orgánica real boliviana",
@@ -276,8 +304,10 @@ const FIT_LIGHT_PRODUCTS: Product[] = [
   },
   {
     id: "fl007",
+    slug: "bebida-vegetal-almendra-alpro",
     name: "Bebida Vegetal de Almendra",
     brand: "Alpro",
+    description: "Alternativa vegetal a la leche, elaborada con almendras seleccionadas. Sin lactosa, sin gluten, fuente de calcio y vitamina D. 1 litro.",
     price: 24.5,
     imageUrl: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=400&fit=crop&q=80",
     imageAlt: "Bebida vegetal de almendra Alpro",
@@ -288,8 +318,10 @@ const FIT_LIGHT_PRODUCTS: Product[] = [
   },
   {
     id: "fl008",
+    slug: "yogur-natural-sin-azucar-pil",
     name: "Yogur Natural Sin Azúcar",
     brand: "Pil",
+    description: "Yogur natural fermentado sin azúcar añadida. Rico en probióticos que favorecen la flora intestinal. Bajo en calorías. Pote de 500 g.",
     price: 6.9,
     imageUrl: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop&q=80",
     imageAlt: "Yogur natural sin azúcar Pil",
@@ -318,3 +350,20 @@ export const PRODUCT_SECTIONS: ProductSection[] = [
     viewAllHref: "/fit-light",
   },
 ];
+
+// ─── Helpers ──────────────────────────────────
+
+/** Todos los productos de todas las secciones (para búsqueda y página de detalle) */
+export const ALL_PRODUCTS: Product[] = PRODUCT_SECTIONS.flatMap((s) => s.products);
+
+/** Busca un producto por slug. Devuelve undefined si no existe. */
+export function getProductBySlug(slug: string): Product | undefined {
+  return ALL_PRODUCTS.find((p) => p.slug === slug);
+}
+
+/** Devuelve productos relacionados (misma categoría, excluyendo el actual, máx. 5) */
+export function getRelatedProducts(product: Product, limit = 5): Product[] {
+  return ALL_PRODUCTS.filter(
+    (p) => p.category === product.category && p.id !== product.id
+  ).slice(0, limit);
+}

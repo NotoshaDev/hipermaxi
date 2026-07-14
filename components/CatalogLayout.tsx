@@ -230,42 +230,46 @@ function CatalogCard({ product }: { product: Product }) {
       aria-label={product.name}
       className="group flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-100 transition-all duration-200 hover:shadow-md hover:ring-slate-200"
     >
-      {/* Imagen del producto */}
-      <div className="relative aspect-square w-full overflow-hidden bg-slate-50">
-        {/* Badge superior izquierdo: Nuevo / Fit & Light / Fresco */}
-        {badgeText && !product.discountPercent && (
-          <div
-            className={`absolute left-2 top-2 z-10 rounded-md px-1.5 py-0.5 text-[10px] font-bold ${badgeStyle}`}
-          >
-            {badgeText}
-          </div>
-        )}
-        {/* Badge descuento superior derecho */}
-        {product.discountPercent ? (
-          <div
-            className="absolute right-2 top-2 z-10 rounded-md bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white"
-            aria-label={`${product.discountPercent}% de descuento`}
-          >
-            -{product.discountPercent}%
-          </div>
-        ) : null}
-        <Image
-          src={product.imageUrl}
-          alt={product.imageAlt}
-          fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-          loading="lazy"
-          quality={75}
-        />
-      </div>
+      {/* Imagen — clickeable → página de detalle */}
+      <Link href={`/productos/${product.slug}`} tabIndex={-1} aria-label={`Ver detalle de ${product.name}`}>
+        <div className="relative aspect-square w-full overflow-hidden bg-slate-50">
+          {/* Badge superior izquierdo: Nuevo / Fit & Light / Fresco */}
+          {badgeText && !product.discountPercent && (
+            <div
+              className={`absolute left-2 top-2 z-10 rounded-md px-1.5 py-0.5 text-[10px] font-bold ${badgeStyle}`}
+            >
+              {badgeText}
+            </div>
+          )}
+          {/* Badge descuento superior derecho */}
+          {product.discountPercent ? (
+            <div
+              className="absolute right-2 top-2 z-10 rounded-md bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white"
+              aria-label={`${product.discountPercent}% de descuento`}
+            >
+              -{product.discountPercent}%
+            </div>
+          ) : null}
+          <Image
+            src={product.imageUrl}
+            alt={product.imageAlt}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            loading="lazy"
+            quality={75}
+          />
+        </div>
+      </Link>
 
       {/* Info del producto */}
       <div className="flex flex-1 flex-col p-3">
         <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">{product.brand}</span>
-        <h3 className="mt-0.5 line-clamp-2 flex-1 text-xs font-semibold leading-snug text-slate-800 sm:text-sm">
-          {product.name}
-        </h3>
+        <Link href={`/productos/${product.slug}`}>
+          <h3 className="mt-0.5 line-clamp-2 flex-1 text-xs font-semibold leading-snug text-slate-800 transition-colors hover:text-orange-600 sm:text-sm">
+            {product.name}
+          </h3>
+        </Link>
 
         {/* Precio */}
         <div className="mt-2 flex items-end gap-1.5">

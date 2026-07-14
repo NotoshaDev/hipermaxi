@@ -4,6 +4,8 @@
 
 export interface Product {
   id: string;
+  /** URL-friendly identifier, e.g. "aceite-girasol-fino" */
+  slug: string;
   name: string;
   brand: string;
   /** Price in bolivianos, e.g. 12.90 */
@@ -14,6 +16,8 @@ export interface Product {
   discountPercent?: number;
   /** Badge label: "Nuevo", "Oferta", "Fit & Light", etc. */
   badge?: string;
+  /** Short marketing description shown on detail page */
+  description?: string;
   /** Absolute path under /public or a remote URL */
   imageUrl: string;
   imageAlt: string;

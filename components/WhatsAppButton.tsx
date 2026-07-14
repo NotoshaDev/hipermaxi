@@ -7,9 +7,9 @@
 import { useState, useEffect } from "react";
 
 // ─── Config — cambiá el número por el real de la sucursal ────────────────────
-const WA_PHONE   = "59170000000"; // formato: código país + número, sin +
+const WA_PHONE = "59173344509"; // formato: código país + número, sin +
 const WA_MESSAGE = "¡Hola! Quisiera información sobre productos de Hipermaxi Juan de la Rosa. 🛒";
-const WA_URL     = `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(WA_MESSAGE)}`;
+const WA_URL = `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(WA_MESSAGE)}`;
 
 // ─── WhatsApp SVG icon ────────────────────────────────────────────────────────
 function IconWhatsApp({ className }: { className?: string }) {
