@@ -1,14 +1,14 @@
 "use client";
 // ─── LayoutHeader.tsx ──────────────────────────────────────────────────────────
 // Header con:
-//   1. Top bar  : Logo · Buscador funcional (live search) · Sucursal · Auth+Carrito
-//   2. Sub-nav  : Barra blanca de categorías
-// Conectado al CartContext para mostrar el contador real.
+//   1. Top bar  : Logo real · Buscador (live search) · Sucursal · Auth + Carrito
+//   2. Sub-nav  : Barra NARANJA con categorías + iconos + ítem activo resaltado
 // ──────────────────────────────────────────────────────────────────────────────
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 import CartDrawer from "@/components/CartDrawer";
 import { PRODUCT_SECTIONS } from "@/lib/data";
@@ -18,18 +18,18 @@ import type { Product } from "@/components/types/product";
 
 const ALL_PRODUCTS: Product[] = PRODUCT_SECTIONS.flatMap((s) => s.products);
 
-// ─── Nav categories ───────────────────────────────────────────────────────────
+// ─── Nav categories con icono ─────────────────────────────────────────────────
 
 const NAV_CATEGORIES = [
-  { id: "abarrotes",  label: "Abarrotes",         href: "/categoria/abarrotes" },
-  { id: "bebidas",    label: "Bebidas",            href: "/categoria/bebidas" },
-  { id: "carnes",     label: "Carnes y Aves",      href: "/categoria/carnes" },
-  { id: "lacteos",    label: "Lácteos",            href: "/categoria/lacteos" },
-  { id: "frutas",     label: "Frutas y Verduras",  href: "/categoria/frutas-verduras" },
-  { id: "panaderia",  label: "Panadería",          href: "/categoria/panaderia" },
-  { id: "limpieza",   label: "Limpieza",           href: "/categoria/limpieza" },
-  { id: "mascotas",   label: "Mascotas",           href: "/categoria/mascotas" },
-  { id: "farmacia",   label: "Farmacia",           href: "/categoria/farmacia" },
+  { id: "abarrotes", label: "Abarrotes", href: "/categoria/abarrotes", icon: "🛒" },
+  { id: "bebidas", label: "Bebidas", href: "/categoria/bebidas", icon: "🥤" },
+  { id: "carnes", label: "Carnes y Aves", href: "/categoria/carnes", icon: "🥩" },
+  { id: "lacteos", label: "Lácteos", href: "/categoria/lacteos", icon: "🥛" },
+  { id: "frutas", label: "Frutas y Verduras", href: "/categoria/frutas-verduras", icon: "🥦" },
+  { id: "panaderia", label: "Panadería", href: "/categoria/panaderia", icon: "🥐" },
+  { id: "limpieza", label: "Limpieza", href: "/categoria/limpieza", icon: "🧹" },
+  { id: "mascotas", label: "Mascotas", href: "/categoria/mascotas", icon: "🐾" },
+  { id: "farmacia", label: "Farmacia", href: "/categoria/farmacia", icon: "💊" },
 ];
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -68,14 +68,9 @@ function SearchBox() {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Debounced search
   useEffect(() => {
     const q = query.trim().toLowerCase();
-    if (q.length < 2) {
-      setResults([]);
-      setOpen(false);
-      return;
-    }
+    if (q.length < 2) { setResults([]); setOpen(false); return; }
     const filtered = ALL_PRODUCTS.filter(
       (p) =>
         p.name.toLowerCase().includes(q) ||
@@ -86,7 +81,6 @@ function SearchBox() {
     setOpen(filtered.length > 0);
   }, [query]);
 
-  // Close on outside click
   useEffect(() => {
     function handle(e: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
@@ -111,31 +105,21 @@ function SearchBox() {
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
         placeholder="Buscar productos, marcas o categorías…"
-        className="h-10 w-full rounded border border-slate-300 bg-white pl-9 pr-4 text-sm text-slate-700 placeholder:text-slate-400 transition-all duration-150 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-200"
+        className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-4 text-sm text-slate-700 placeholder:text-slate-400 transition-all duration-150 focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-200"
       />
 
-      {/* ── Dropdown de resultados ── */}
       {open && (
         <div className="absolute left-0 top-full z-50 mt-1 w-full overflow-hidden rounded-xl border border-slate-100 bg-white shadow-xl">
           <ul role="listbox" aria-label="Resultados de búsqueda">
             {results.map((p) => (
               <li key={p.id} role="option" aria-selected="false">
-                <button
+                <Link
+                  href={`/productos/${p.slug}`}
                   className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-orange-50"
-                  onClick={() => {
-                    setQuery(p.name);
-                    setOpen(false);
-                  }}
+                  onClick={() => { setQuery(p.name); setOpen(false); }}
                 >
-                  {/* Thumbnail */}
                   <div className="relative size-10 shrink-0 overflow-hidden rounded-lg bg-slate-50">
-                    <Image
-                      src={p.imageUrl}
-                      alt={p.imageAlt}
-                      fill
-                      sizes="40px"
-                      className="object-cover"
-                    />
+                    <Image src={p.imageUrl} alt={p.imageAlt} fill sizes="40px" className="object-cover" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-slate-800">{p.name}</p>
@@ -144,11 +128,10 @@ function SearchBox() {
                   <span className="shrink-0 text-sm font-bold text-orange-600">
                     Bs {p.price.toFixed(2)}
                   </span>
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
-          {/* Footer del dropdown */}
           <div className="border-t border-slate-100 px-4 py-2 text-center">
             <button
               className="text-xs font-medium text-orange-500 hover:text-orange-600"
@@ -163,41 +146,45 @@ function SearchBox() {
   );
 }
 
-// ─── Main LayoutHeader ─────────────────────────────────────────────────────────
+// ─── Main LayoutHeader ────────────────────────────────────────────────────────
 
 export default function LayoutHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const { totalItems } = useCart();
+  const pathname = usePathname();
+
+  // Detecta qué categoría está activa para resaltar en el nav
+  const activeCategory = NAV_CATEGORIES.find((c) => pathname.startsWith(c.href))?.id ?? null;
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex flex-col shadow-[0_1px_16px_rgba(0,0,0,0.07)]">
+      <header className="sticky top-0 z-40 flex flex-col shadow-[0_2px_20px_rgba(0,0,0,0.10)]">
 
-        {/* ══ FILA 1: Top bar ════════════════════════════════════════════════ */}
+        {/* ══ FILA 1: Top bar blanca ════════════════════════════════════════════ */}
         <div className="bg-white">
           <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
 
-            {/* Logo */}
+            {/* ── Logo Hipermaxi ── */}
             <Link href="/" aria-label="Hipermaxi — Inicio" className="flex-shrink-0">
-              <div className="flex h-9 items-center gap-1.5">
-                <div className="flex size-9 items-center justify-center rounded-full border-2 border-slate-300 bg-white">
-                  <span className="text-sm font-black leading-none text-slate-700">Logo</span>
-                </div>
-                <span className="hidden text-lg font-extrabold tracking-tight text-slate-800 sm:block">
-                  hipermaxi
-                </span>
-              </div>
+              <Image
+                src="/logo-hiper.png"
+                alt="Hipermaxi"
+                width={110}
+                height={48}
+                className="h-11 w-auto object-contain"
+                priority
+              />
             </Link>
 
-            {/* Buscador funcional */}
+            {/* ── Buscador ── */}
             <SearchBox />
 
-            {/* Botón ovalado "Sucursal" */}
+            {/* ── Sucursal ── */}
             <button
               type="button"
               aria-label="Seleccionar sucursal"
-              className="hidden items-center gap-1.5 rounded-full border border-slate-300 bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-700 transition-all duration-150 hover:border-orange-300 hover:text-orange-600 sm:flex"
+              className="hidden items-center gap-1.5 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 transition-all duration-150 hover:border-orange-400 hover:text-orange-600 sm:flex"
             >
               <IconMapPin className="size-3.5 text-orange-500" />
               <span className="max-w-[120px] truncate">Sucursal</span>
@@ -206,26 +193,26 @@ export default function LayoutHeader() {
               </svg>
             </button>
 
-            {/* Auth + Carrito */}
+            {/* ── Auth + Carrito ── */}
             <div className="flex flex-shrink-0 items-center gap-2">
               <Link
                 href="/login"
-                className="hidden items-center gap-1.5 rounded border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-700 transition-all duration-150 hover:border-slate-300 hover:bg-slate-50 sm:flex"
+                className="hidden items-center gap-1.5 rounded-lg border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-700 transition-all duration-150 hover:border-orange-400 hover:text-orange-600 sm:flex"
               >
                 Iniciar sesión
               </Link>
 
-              {/* Botón carrito — abre el drawer */}
+              {/* Botón carrito */}
               <button
                 type="button"
                 onClick={() => setCartOpen(true)}
                 aria-label={`Carrito — ${totalItems} artículos`}
-                className="relative flex items-center gap-2 rounded-lg bg-slate-800 px-3.5 py-2 text-xs font-semibold text-white transition-all duration-150 hover:bg-slate-700 active:scale-95"
+                className="relative flex items-center gap-2 rounded-lg bg-orange-500 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition-all duration-150 hover:bg-orange-600 active:scale-95"
               >
                 <IconCart className="size-4 text-white" />
                 <span className="hidden sm:block">Carrito</span>
                 {totalItems > 0 && (
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1 text-[10px] font-bold text-white" aria-live="polite">
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-orange-600" aria-live="polite">
                     {totalItems > 99 ? "99+" : totalItems}
                   </span>
                 )}
@@ -253,25 +240,37 @@ export default function LayoutHeader() {
           </div>
         </div>
 
-        {/* ══ FILA 2: Sub-nav de categorías ══════════════════════════════════ */}
+        {/* ══ FILA 2: Sub-nav NARANJA con iconos ═══════════════════════════════ */}
         <nav
           aria-label="Categorías principales"
-          className={`border-b border-slate-100 bg-white ${mobileMenuOpen ? "block" : "hidden lg:block"}`}
+          className={`bg-orange-500 shadow-sm ${mobileMenuOpen ? "block" : "hidden lg:block"}`}
         >
           <ul
             className="mx-auto flex max-w-7xl items-center overflow-x-auto px-4 sm:px-6 lg:px-8"
             style={{ scrollbarWidth: "none" }}
           >
-            {NAV_CATEGORIES.map((cat) => (
-              <li key={cat.id} className="flex-shrink-0">
-                <Link
-                  href={cat.href}
-                  className="relative flex items-center px-4 py-3.5 text-sm font-medium text-slate-700 transition-all duration-150 hover:text-orange-600 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-orange-500 after:transition-transform after:duration-200 hover:after:scale-x-100"
-                >
-                  {cat.label}
-                </Link>
-              </li>
-            ))}
+            {NAV_CATEGORIES.map((cat) => {
+              const isActive = activeCategory === cat.id;
+              return (
+                <li key={cat.id} className="flex-shrink-0">
+                  <Link
+                    href={cat.href}
+                    className={`
+                      relative flex items-center gap-1.5 px-3.5 py-3 text-sm font-semibold transition-all duration-150
+                      ${isActive
+                        ? "text-white after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full after:rounded-t-full after:bg-white"
+                        : "text-orange-100 hover:text-white after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full after:origin-left after:scale-x-0 after:rounded-t-full after:bg-white/70 after:transition-transform after:duration-200 hover:after:scale-x-100"
+                      }
+                    `}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    <span className="text-base leading-none" aria-hidden="true">{cat.icon}</span>
+                    <span className="hidden sm:block">{cat.label}</span>
+                    <span className="sm:hidden text-xs">{cat.label.split(" ")[0]}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
