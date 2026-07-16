@@ -21,15 +21,15 @@ const ALL_PRODUCTS: Product[] = PRODUCT_SECTIONS.flatMap((s) => s.products);
 // ─── Nav categories con icono ─────────────────────────────────────────────────
 
 const NAV_CATEGORIES = [
-  { id: "abarrotes", label: "Abarrotes", href: "/categoria/abarrotes", icon: "🛒" },
-  { id: "bebidas", label: "Bebidas", href: "/categoria/bebidas", icon: "🥤" },
-  { id: "carnes", label: "Carnes y Aves", href: "/categoria/carnes", icon: "🥩" },
-  { id: "lacteos", label: "Lácteos", href: "/categoria/lacteos", icon: "🥛" },
-  { id: "frutas", label: "Frutas y Verduras", href: "/categoria/frutas-verduras", icon: "🥦" },
-  { id: "panaderia", label: "Panadería", href: "/categoria/panaderia", icon: "🥐" },
-  { id: "limpieza", label: "Limpieza", href: "/categoria/limpieza", icon: "🧹" },
-  { id: "mascotas", label: "Mascotas", href: "/categoria/mascotas", icon: "🐾" },
-  { id: "farmacia", label: "Farmacia", href: "/categoria/farmacia", icon: "💊" },
+  { id: "abarrotes", label: "Abarrotes", href: "/categoria/abarrotes" },
+  { id: "bebidas", label: "Bebidas", href: "/categoria/bebidas" },
+  { id: "carnes", label: "Carnes y Aves", href: "/categoria/carnes" },
+  { id: "lacteos", label: "Lácteos", href: "/categoria/lacteos" },
+  { id: "frutas", label: "Frutas y Verduras", href: "/categoria/frutas-verduras" },
+  { id: "panaderia", label: "Panadería", href: "/categoria/panaderia" },
+  { id: "limpieza", label: "Limpieza", href: "/categoria/limpieza" },
+  { id: "mascotas", label: "Mascotas", href: "/categoria/mascotas" },
+  { id: "farmacia", label: "Farmacia", href: "/categoria/farmacia" },
 ];
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
